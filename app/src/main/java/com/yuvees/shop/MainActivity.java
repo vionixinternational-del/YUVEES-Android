@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -17,25 +18,43 @@ public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
 
+    private final Handler splashHandler =
+            new Handler(Looper.getMainLooper());
+
+    private final Runnable websiteRunnable = new Runnable() {
+        @Override
+        public void run() {
+            showWebsite();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Keep the existing white Splash Screen
         setContentView(R.layout.activity_splash);
 
         ImageView splashLogo = findViewById(R.id.splashLogo);
 
+        // Start slightly smaller and invisible
+        splashLogo.setAlpha(0f);
+        splashLogo.setScaleX(0.88f);
+        splashLogo.setScaleY(0.88f);
+
+        // Elegant luxury logo reveal
         splashLogo.animate()
                 .alpha(1.0f)
                 .scaleX(1.0f)
                 .scaleY(1.0f)
-                .setDuration(900)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setDuration(1200)
+                .setInterpolator(
+                        new AccelerateDecelerateInterpolator()
+                )
                 .start();
 
-        new Handler().postDelayed(() -> {
-            showWebsite();
-        }, 1800);
+        // Keep the luxury splash visible before opening YUVEES
+        splashHandler.postDelayed(websiteRunnable, 2300);
     }
 
     private void showWebsite() {
@@ -62,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
 
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                Intent intent =
+                        new Intent(Intent.ACTION_VIEW, uri);
+
                 startActivity(intent);
                 return true;
             }
@@ -79,5 +100,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        splashHandler.removeCallbacks(websiteRunnable);
+
+        if (webView != null) {
+            webView.destroy();
+            webView = null;
+        }
+
+        super.onDestroy();
     }
 }
