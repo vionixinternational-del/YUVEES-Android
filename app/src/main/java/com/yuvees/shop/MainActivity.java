@@ -32,29 +32,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Keep the existing white Splash Screen
+        // Existing white splash screen
         setContentView(R.layout.activity_splash);
 
         ImageView splashLogo = findViewById(R.id.splashLogo);
 
-        // Start slightly smaller and invisible
+        // Start subtle and invisible
         splashLogo.setAlpha(0f);
-        splashLogo.setScaleX(0.88f);
-        splashLogo.setScaleY(0.88f);
+        splashLogo.setScaleX(0.92f);
+        splashLogo.setScaleY(0.92f);
 
-        // Elegant luxury logo reveal
+        // Smooth premium logo reveal
         splashLogo.animate()
                 .alpha(1.0f)
                 .scaleX(1.0f)
                 .scaleY(1.0f)
-                .setDuration(1200)
+                .setDuration(1100)
                 .setInterpolator(
                         new AccelerateDecelerateInterpolator()
                 )
                 .start();
 
-        // Keep the luxury splash visible before opening YUVEES
-        splashHandler.postDelayed(websiteRunnable, 2300);
+        // Keep splash on screen for a short elegant moment
+        splashHandler.postDelayed(websiteRunnable, 2100);
     }
 
     private void showWebsite() {
@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if ("yuvees.com".equals(uri.getHost())
                         || "www.yuvees.com".equals(uri.getHost())) {
+
                     return false;
                 }
 
@@ -85,10 +86,12 @@ public class MainActivity extends AppCompatActivity {
                         new Intent(Intent.ACTION_VIEW, uri);
 
                 startActivity(intent);
+
                 return true;
             }
         });
 
+        // Our YUVEES website
         webView.loadUrl("https://yuvees.com/");
     }
 
@@ -105,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
 
+        // Prevent delayed splash action after Activity is destroyed
         splashHandler.removeCallbacks(websiteRunnable);
 
         if (webView != null) {
