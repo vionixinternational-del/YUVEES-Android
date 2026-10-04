@@ -52,6 +52,32 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(
-                    WebView view, WebResourceRequest request) {
+                    WebView view,
+                    WebResourceRequest request) {
 
-                Uri uri =
+                Uri uri = request.getUrl();
+
+                if ("yuvees.com".equals(uri.getHost())
+                        || "www.yuvees.com".equals(uri.getHost())) {
+                    return false;
+                }
+
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        webView.loadUrl("https://yuvees.com/");
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (webView != null && webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+}
