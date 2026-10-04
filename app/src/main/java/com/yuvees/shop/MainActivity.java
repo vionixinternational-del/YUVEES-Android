@@ -32,17 +32,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Existing white splash screen
+        // White splash screen
         setContentView(R.layout.activity_splash);
 
         ImageView splashLogo = findViewById(R.id.splashLogo);
 
-        // Start subtle and invisible
+        // Initial position of logo
         splashLogo.setAlpha(0f);
         splashLogo.setScaleX(0.92f);
         splashLogo.setScaleY(0.92f);
 
-        // Smooth premium logo reveal
+        // Smooth luxury logo animation
         splashLogo.animate()
                 .alpha(1.0f)
                 .scaleX(1.0f)
@@ -53,8 +53,11 @@ public class MainActivity extends AppCompatActivity {
                 )
                 .start();
 
-        // Keep splash on screen for a short elegant moment
-        splashHandler.postDelayed(websiteRunnable, 2100);
+        // Open website after splash
+        splashHandler.postDelayed(
+                websiteRunnable,
+                2100
+        );
     }
 
     private void showWebsite() {
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(webView);
 
         WebSettings settings = webView.getSettings();
+
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setBuiltInZoomControls(false);
@@ -76,12 +80,14 @@ public class MainActivity extends AppCompatActivity {
 
                 Uri uri = request.getUrl();
 
+                // Keep YUVEES website inside the app
                 if ("yuvees.com".equals(uri.getHost())
                         || "www.yuvees.com".equals(uri.getHost())) {
 
                     return false;
                 }
 
+                // Open external links outside the app
                 Intent intent =
                         new Intent(Intent.ACTION_VIEW, uri);
 
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Our YUVEES website
+        // Load YUVEES website
         webView.loadUrl("https://yuvees.com/");
     }
 
@@ -108,9 +114,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
 
-        // Prevent delayed splash action after Activity is destroyed
+        // Cancel splash timer
         splashHandler.removeCallbacks(websiteRunnable);
 
+        // Clean WebView
         if (webView != null) {
             webView.destroy();
             webView = null;
